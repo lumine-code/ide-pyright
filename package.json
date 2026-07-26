@@ -1,0 +1,82 @@
+{
+  "name": "ide-pyright",
+  "author": "lumine-code",
+  "description": "Pyright language-server adapter for Python.",
+  "repository": "https://github.com/lumine-code/ide-pyright",
+  "bugs": {
+    "url": "https://github.com/lumine-code/ide-pyright/issues"
+  },
+  "keywords": [
+    "language-server",
+    "lsp",
+    "python",
+    "intellisense",
+    "type-checking"
+  ],
+  "version": "1.0.0",
+  "license": "MIT",
+  "engines": {
+    "atom": ">=1.100.0 <2.0.0"
+  },
+  "main": "./lib/main",
+  "scripts": {
+    "test": "cd ../lumine && npm run test:only -- ../ide-pyright/spec",
+    "lint": "eslint . --max-warnings 0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "consumedServices": {
+    "lumine.languageServer": {
+      "versions": {
+        "^1.0.0": "consumeLanguageServer"
+      }
+    }
+  },
+  "dependencies": {
+    "pyright": "1.1.411"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.8.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-n": "^18.2.2",
+    "globals": "^17.7.0",
+    "prettier": "^3.9.6"
+  },
+  "configSchema": {
+    "serverPath": {
+      "title": "Server Path",
+      "description": "Absolute path to a Pyright `langserver` executable. Leave empty to use the bundled server.",
+      "type": "string",
+      "default": ""
+    },
+    "pythonPath": {
+      "title": "Python Path",
+      "description": "Path to the Python interpreter used for analysis. Leave empty for automatic discovery.",
+      "type": "string",
+      "default": ""
+    },
+    "typeCheckingMode": {
+      "title": "Type Checking Mode",
+      "description": "Strictness of Pyright's type checking.",
+      "type": "string",
+      "enum": [
+        "off",
+        "basic",
+        "standard",
+        "strict"
+      ],
+      "default": "basic"
+    },
+    "diagnosticMode": {
+      "title": "Diagnostic Mode",
+      "description": "Analyze only open files or the whole workspace.",
+      "type": "string",
+      "enum": [
+        "openFilesOnly",
+        "workspace"
+      ],
+      "default": "openFilesOnly"
+    }
+  }
+}
