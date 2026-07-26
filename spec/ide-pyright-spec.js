@@ -19,7 +19,7 @@ describe("ide-pyright server resolution", () => {
 describe("ide-pyright adapter", () => {
   it("registers with the language-server service", async () => {
     let adapter;
-    const disposable = main.consumeLanguageServer({
+    const disposable = main.consumeIdeClient({
       registerAdapter(registered) {
         adapter = registered;
         return { dispose() {} };
@@ -32,7 +32,7 @@ describe("ide-pyright adapter", () => {
   });
   it("maps editor settings into Pyright configuration sections", () => {
     let adapter;
-    main.consumeLanguageServer({
+    main.consumeIdeClient({
       registerAdapter(registered) {
         adapter = registered;
         return { dispose() {} };
