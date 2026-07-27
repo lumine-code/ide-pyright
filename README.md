@@ -18,7 +18,7 @@ To install `ide-pyright` search for _ide-pyright_ in the Install pane of the Lum
 
 ## Services
 
-- **[ide-client](https://lumine-code.github.io/docs.html#services/ide-client)** (`^1.0.0`): consumed to register the Pyright adapter with the editor's language-server client.
+- **ide-client** (`^1.0.0`): consumed to register the Pyright adapter with the editor's language-server client.
 
 ## Contributing
 
