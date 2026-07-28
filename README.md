@@ -7,6 +7,7 @@ Registers the Pyright language server with the bundled `ide-client` package, pro
 ## Features
 
 - **Bundled server**: ships Pyright, no setup required.
+- **Python and IPython**: serves the Python grammar and its IPython dialect.
 - **Custom binary**: the Server Path setting points at any other Pyright `langserver` executable.
 - **Interpreter selection**: the Python Path setting picks the interpreter used for analysis.
 - **Analysis settings**: type-checking strictness and diagnostic scope map straight to Pyright configuration.

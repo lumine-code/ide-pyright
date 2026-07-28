@@ -26,7 +26,7 @@ describe("ide-pyright adapter", () => {
       },
     });
     expect(adapter.id).toBe("ide-pyright");
-    expect(adapter.grammarScopes).toEqual(["source.python"]);
+    expect(adapter.grammarScopes).toEqual(["source.python", "source.python.ipy"]);
     expect(adapter.settingsKeyPaths).toEqual(["ide-pyright"]);
     disposable.dispose();
   });
