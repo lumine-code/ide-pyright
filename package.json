@@ -54,33 +54,194 @@
       "type": "string",
       "default": ""
     },
+    "features": {
+      "title": "Features",
+      "description": "Which parts of Pyright the editor uses. Turning one off hands it to the next server serving the same file, which is how you choose between Pyright and another Python server. Only what Pyright implements is listed: it has no formatter, inlay hints, code lens, or semantic tokens.",
+      "type": "object",
+      "properties": {
+        "diagnostics": {
+          "title": "Diagnostics",
+          "description": "Report Pyright's type errors and warnings in the linter.",
+          "type": "boolean",
+          "default": true
+        },
+        "autocomplete": {
+          "title": "Autocomplete",
+          "description": "Offer Pyright's completions while typing.",
+          "type": "boolean",
+          "default": true
+        },
+        "hover": {
+          "title": "Hover",
+          "description": "Show Pyright's types and documentation on hover.",
+          "type": "boolean",
+          "default": true
+        },
+        "signature": {
+          "title": "Signature Help",
+          "description": "Show the call signature while typing arguments.",
+          "type": "boolean",
+          "default": true
+        },
+        "definition": {
+          "title": "Go To Definition",
+          "description": "Resolve definitions and declarations through Pyright.",
+          "type": "boolean",
+          "default": true
+        },
+        "references": {
+          "title": "Find References",
+          "description": "List occurrences of a symbol through Pyright.",
+          "type": "boolean",
+          "default": true
+        },
+        "symbols": {
+          "title": "Symbols",
+          "description": "Serve document and project symbols to go-to-symbol.",
+          "type": "boolean",
+          "default": true
+        },
+        "outline": {
+          "title": "Outline",
+          "description": "Fill the outline panel from Pyright's document symbols.",
+          "type": "boolean",
+          "default": true
+        },
+        "rename": {
+          "title": "Rename",
+          "description": "Rename symbols across the project through Pyright.",
+          "type": "boolean",
+          "default": true
+        },
+        "codeActions": {
+          "title": "Code Actions",
+          "description": "Offer Pyright's quick fixes in the intentions list.",
+          "type": "boolean",
+          "default": true
+        }
+      }
+    },
     "pythonPath": {
       "title": "Python Path",
       "description": "Path to the Python interpreter used for analysis. Leave empty for automatic discovery.",
       "type": "string",
       "default": ""
     },
-    "typeCheckingMode": {
-      "title": "Type Checking Mode",
-      "description": "Strictness of Pyright's type checking.",
+    "venvPath": {
+      "title": "Virtual Environment Path",
+      "description": "Path to the folder that holds your virtual environments, not to one of them. Leave empty to let Pyright find the environment itself.",
       "type": "string",
-      "enum": [
-        "off",
-        "basic",
-        "standard",
-        "strict"
-      ],
-      "default": "basic"
+      "default": ""
     },
-    "diagnosticMode": {
-      "title": "Diagnostic Mode",
-      "description": "Analyze only open files or the whole workspace.",
-      "type": "string",
-      "enum": [
-        "openFilesOnly",
-        "workspace"
-      ],
-      "default": "openFilesOnly"
+    "analysis": {
+      "title": "Analysis",
+      "description": "What Pyright reads and how strictly it reads it. A `pyrightconfig.json` or the `[tool.pyright]` table of `pyproject.toml` overrides these for the project that has one, and is the only place to override the severity of an individual rule.",
+      "type": "object",
+      "properties": {
+        "typeCheckingMode": {
+          "title": "Type Checking Mode",
+          "description": "Strictness of Pyright's type checking.",
+          "type": "string",
+          "enum": [
+            "off",
+            "basic",
+            "standard",
+            "strict"
+          ],
+          "default": "basic"
+        },
+        "diagnosticMode": {
+          "title": "Diagnostic Mode",
+          "description": "Analyze only the open files or the whole workspace. Checking the workspace finds errors in files you have not opened, at the cost of a much longer first analysis.",
+          "type": "string",
+          "enum": [
+            "openFilesOnly",
+            "workspace"
+          ],
+          "default": "openFilesOnly"
+        },
+        "extraPaths": {
+          "title": "Extra Paths",
+          "description": "Additional directories to search for imports, for source layouts Pyright cannot infer — a `src` root, a vendored library, a generated stub tree. Relative paths resolve against the project root.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "stubPath": {
+          "title": "Stub Path",
+          "description": "Directory holding your own type stubs. Leave empty for the conventional `typings` directory.",
+          "type": "string",
+          "default": ""
+        },
+        "typeshedPaths": {
+          "title": "Typeshed Paths",
+          "description": "Where to look for typeshed's bundled stubs instead of the copy that ships with Pyright. Only the first entry is used.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "include": {
+          "title": "Include",
+          "description": "Paths to analyze. Leave empty to analyze the whole project root.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "exclude": {
+          "title": "Exclude",
+          "description": "Paths not to analyze at all, such as a build directory or a vendored tree.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "ignore": {
+          "title": "Ignore",
+          "description": "Paths that are still analyzed, because other files import them, but report no diagnostics of their own.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "autoSearchPaths": {
+          "title": "Automatic Search Paths",
+          "description": "Treat the conventional roots as import paths, so a `src` directory beside the project root resolves without listing it above.",
+          "type": "boolean",
+          "default": true
+        },
+        "useLibraryCodeForTypes": {
+          "title": "Use Library Code For Types",
+          "description": "Infer types by reading a library's source when it ships no stubs. Turning this off leaves untyped libraries as `Unknown`.",
+          "type": "boolean",
+          "default": true
+        },
+        "autoImportCompletions": {
+          "title": "Auto-Import Completions",
+          "description": "Offer symbols that are not imported yet and add the import when one is accepted.",
+          "type": "boolean",
+          "default": true
+        },
+        "logLevel": {
+          "title": "Log Level",
+          "description": "How much Pyright writes to its log, which `ide-client:show-log` opens.",
+          "type": "string",
+          "enum": [
+            "Error",
+            "Warning",
+            "Information",
+            "Trace"
+          ],
+          "default": "Information"
+        }
+      }
     }
   }
 }
