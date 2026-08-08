@@ -1,4 +1,6 @@
 const fs = require("fs");
+const os = require("os");
+const path = require("path");
 const { resolveServer } = require("../lib/server");
 const main = require("../lib/main");
 
@@ -20,13 +22,23 @@ describe("ide-pyright server resolution", () => {
   it("prefers the configured path", async () => {
     const launch = await resolveServer(process.execPath);
     expect(launch.command).toBe(process.execPath);
-    expect(launch.args).toEqual(["--stdio"]);
+    expect(launch.args[0]).toBe("--stdio");
+    expect(launch.args[1]).toMatch(/^--cancellationReceive=file:[0-9a-f]{42}$/);
+    expect(launch.fileCancellationFolder).toBe(
+      path.join(os.tmpdir(), "python-languageserver-cancellation", launch.args[1].split(":")[1]),
+    );
   });
   it("falls back to the bundled server module", async () => {
     const launch = await resolveServer("");
     expect(launch.command).toBe(process.execPath);
     expect(fs.existsSync(launch.args[0])).toBe(true);
+    expect(launch.args[2]).toMatch(/^--cancellationReceive=file:[0-9a-f]{42}$/);
     expect(launch.env.ELECTRON_RUN_AS_NODE).toBe("1");
+  });
+
+  it("gives concurrent servers separate cancellation channels", async () => {
+    const [first, second] = await Promise.all([resolveServer(""), resolveServer("")]);
+    expect(first.fileCancellationFolder).not.toBe(second.fileCancellationFolder);
   });
 });
 
