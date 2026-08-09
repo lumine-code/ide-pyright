@@ -49,12 +49,12 @@ describe("ide-pyright adapter", () => {
   beforeEach(async () => {
     // Applies the configSchema, so the defaults the adapter reads are the ones
     // the manifest declares rather than undefined.
-    await atom.packages.activatePackage("ide-pyright");
+    await lumine.packages.activatePackage("ide-pyright");
     ({ adapter, disposable } = register());
   });
   afterEach(async () => {
     disposable.dispose();
-    await atom.packages.deactivatePackage("ide-pyright");
+    await lumine.packages.deactivatePackage("ide-pyright");
   });
 
   it("registers with the language-server service", () => {
@@ -64,9 +64,9 @@ describe("ide-pyright adapter", () => {
   });
 
   it("maps editor settings into Pyright configuration sections", () => {
-    atom.config.set("ide-pyright.analysis.typeCheckingMode", "strict");
-    atom.config.set("ide-pyright.analysis.extraPaths", ["src", "vendor"]);
-    atom.config.set("ide-pyright.pythonPath", "/usr/bin/python3");
+    lumine.config.set("ide-pyright.analysis.typeCheckingMode", "strict");
+    lumine.config.set("ide-pyright.analysis.extraPaths", ["src", "vendor"]);
+    lumine.config.set("ide-pyright.pythonPath", "/usr/bin/python3");
 
     const settings = adapter.getSettings();
     expect(settings.python.pythonPath).toBe("/usr/bin/python3");
