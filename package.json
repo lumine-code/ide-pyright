@@ -50,7 +50,7 @@
   "configSchema": {
     "serverPath": {
       "title": "Server Path",
-      "description": "Absolute path to a Pyright `langserver` executable. Leave empty to use the bundled server.",
+      "description": "Absolute path to a Pyright `langserver` executable. Leave empty to use the copy the editor installed, or the server that ships with this package.",
       "type": "string",
       "default": ""
     },

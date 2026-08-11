@@ -1,7 +1,7 @@
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
-const { resolveServer } = require("../lib/server");
+const { resolveServer, managedServer } = require("../lib/server");
 const main = require("../lib/main");
 
 const register = () => {
@@ -39,6 +39,28 @@ describe("ide-pyright server resolution", () => {
   it("gives concurrent servers separate cancellation channels", async () => {
     const [first, second] = await Promise.all([resolveServer(""), resolveServer("")]);
     expect(first.fileCancellationFolder).not.toBe(second.fileCancellationFolder);
+  });
+
+  it("launches a managed copy the same way as the bundled one", async () => {
+    const managed = { modulePath: "/managed/pyright/langserver.index.js", version: "1.1.999" };
+    const launch = await resolveServer("", managed);
+    expect(launch.command).toBe(process.execPath);
+    expect(launch.args[0]).toBe(managed.modulePath);
+    expect(launch.env.ELECTRON_RUN_AS_NODE).toBe("1");
+    expect(launch.version).toBe("1.1.999");
+  });
+
+  it("returns to the server this package ships once the managed copy is gone", async () => {
+    // Uninstalling is safe precisely because this floor is always there.
+    const launch = await resolveServer("", null);
+    expect(fs.existsSync(launch.args[0])).toBe(true);
+    expect(launch.version).toBeUndefined();
+  });
+
+  it("declares the bundled floor so uninstall is offered as a fallback", () => {
+    expect(managedServer.source).toBe("npm");
+    expect(managedServer.bundled).toBe(true);
+    expect(managedServer.packages).toEqual(["pyright"]);
   });
 });
 
