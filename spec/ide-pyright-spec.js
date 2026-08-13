@@ -60,7 +60,7 @@ describe("ide-pyright server resolution", () => {
   it("declares the bundled floor so uninstall is offered as a fallback", () => {
     expect(managedServer.source).toBe("npm");
     expect(managedServer.bundled).toBe(true);
-    expect(managedServer.packages).toEqual(["pyright"]);
+    expect(managedServer.packages).toEqual(["basedpyright"]);
   });
 });
 
@@ -85,7 +85,7 @@ describe("ide-pyright adapter", () => {
     expect(adapter.settingsKeyPaths).toEqual(["ide-pyright"]);
   });
 
-  it("maps editor settings into Pyright configuration sections", () => {
+  it("maps editor settings into the server's configuration sections", () => {
     lumine.config.set("ide-pyright.analysis.typeCheckingMode", "strict");
     lumine.config.set("ide-pyright.analysis.extraPaths", ["src", "vendor"]);
     lumine.config.set("ide-pyright.pythonPath", "/usr/bin/python3");
@@ -94,16 +94,22 @@ describe("ide-pyright adapter", () => {
     expect(settings.python.pythonPath).toBe("/usr/bin/python3");
     expect(settings.python.analysis.typeCheckingMode).toBe("strict");
     expect(settings.python.analysis.extraPaths).toEqual(["src", "vendor"]);
-    // Pyright pulls both sections; they must agree with what was pushed.
+    // The server pulls both spellings of both sections; every answer must
+    // agree with what was pushed.
     expect(adapter.getWorkspaceConfiguration("python.analysis").extraPaths).toEqual([
       "src",
       "vendor",
     ]);
     expect(adapter.getWorkspaceConfiguration("python").pythonPath).toBe("/usr/bin/python3");
+    expect(adapter.getWorkspaceConfiguration("basedpyright").pythonPath).toBe("/usr/bin/python3");
+    expect(adapter.getWorkspaceConfiguration("basedpyright.analysis").extraPaths).toEqual([
+      "src",
+      "vendor",
+    ]);
   });
 
   it("omits an unset path rather than sending an empty one", () => {
-    // Pyright merges what it is sent over pyrightconfig.json, so an empty
+    // Basedpyright merges what it is sent over pyrightconfig.json, so an empty
     // string or list would silently win over the project's own configuration.
     const { python } = adapter.getSettings();
     expect("pythonPath" in python).toBe(true);
@@ -120,11 +126,12 @@ describe("ide-pyright adapter", () => {
 describe("ide-pyright features", () => {
   const { configSchema } = require("../package.json");
 
-  it("offers a switch only for what Pyright advertises", () => {
+  it("offers a switch only for what Basedpyright advertises", () => {
     // Verified against the server's own initialize response, not its docs:
-    // formatting, inlay hints, code lens and semantic tokens are Pylance
-    // features that open-source Pyright does not have, and a switch for one
-    // would be a control that does nothing.
+    // Basedpyright 1.39.9 adds call hierarchy, inlay hints and semantic tokens
+    // over open-source Pyright, and still has no formatter, code lens, or type
+    // hierarchy — a switch for one of those would be a control that does
+    // nothing.
     expect(Object.keys(configSchema.features.properties)).toEqual([
       "diagnostics",
       "autocomplete",
@@ -132,10 +139,13 @@ describe("ide-pyright features", () => {
       "signature",
       "definition",
       "references",
+      "callHierarchy",
       "symbols",
       "outline",
       "rename",
       "codeActions",
+      "inlayHints",
+      "semanticTokens",
     ]);
   });
 

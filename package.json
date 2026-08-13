@@ -1,7 +1,7 @@
 {
   "name": "ide-pyright",
   "author": "lumine-code",
-  "description": "Pyright language-server adapter for Python.",
+  "description": "Basedpyright language-server adapter for Python.",
   "repository": "https://github.com/lumine-code/ide-pyright",
   "bugs": {
     "url": "https://github.com/lumine-code/ide-pyright/issues"
@@ -37,7 +37,7 @@
     }
   },
   "dependencies": {
-    "pyright": "1.1.411"
+    "basedpyright": "1.39.9"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -50,30 +50,30 @@
   "configSchema": {
     "serverPath": {
       "title": "Server Path",
-      "description": "Absolute path to a Pyright `langserver` executable. Leave empty to use the copy the editor installed, or the server that ships with this package.",
+      "description": "Absolute path to a Basedpyright `langserver` executable. Leave empty to use the copy the editor installed, or the server that ships with this package.",
       "type": "string",
       "default": ""
     },
     "features": {
       "title": "Features",
-      "description": "Which parts of Pyright the editor uses. Turning one off hands it to the next server serving the same file, which is how you choose between Pyright and another Python server. Only what Pyright implements is listed: it has no formatter, inlay hints, code lens, or semantic tokens.",
+      "description": "Which parts of Basedpyright the editor uses. Turning one off hands it to the next server serving the same file, which is how you choose between Basedpyright and another Python server. Only what Basedpyright implements is listed: it has no formatter, code lens, or type hierarchy.",
       "type": "object",
       "properties": {
         "diagnostics": {
           "title": "Diagnostics",
-          "description": "Report Pyright's type errors and warnings in the linter.",
+          "description": "Report Basedpyright's type errors and warnings in the linter.",
           "type": "boolean",
           "default": true
         },
         "autocomplete": {
           "title": "Autocomplete",
-          "description": "Offer Pyright's completions while typing.",
+          "description": "Offer Basedpyright's completions while typing.",
           "type": "boolean",
           "default": true
         },
         "hover": {
           "title": "Hover",
-          "description": "Show Pyright's types and documentation on hover.",
+          "description": "Show Basedpyright's types and documentation on hover.",
           "type": "boolean",
           "default": true
         },
@@ -85,13 +85,19 @@
         },
         "definition": {
           "title": "Go To Definition",
-          "description": "Resolve definitions and declarations through Pyright.",
+          "description": "Resolve definitions and declarations through Basedpyright.",
           "type": "boolean",
           "default": true
         },
         "references": {
           "title": "Find References",
-          "description": "List occurrences of a symbol through Pyright.",
+          "description": "List occurrences of a symbol through Basedpyright.",
+          "type": "boolean",
+          "default": true
+        },
+        "callHierarchy": {
+          "title": "Call Hierarchy",
+          "description": "Serve incoming and outgoing calls to the hierarchy view.",
           "type": "boolean",
           "default": true
         },
@@ -103,19 +109,31 @@
         },
         "outline": {
           "title": "Outline",
-          "description": "Fill the outline panel from Pyright's document symbols.",
+          "description": "Fill the outline panel from Basedpyright's document symbols.",
           "type": "boolean",
           "default": true
         },
         "rename": {
           "title": "Rename",
-          "description": "Rename symbols across the project through Pyright.",
+          "description": "Rename symbols across the project through Basedpyright.",
           "type": "boolean",
           "default": true
         },
         "codeActions": {
           "title": "Code Actions",
-          "description": "Offer Pyright's quick fixes in the intentions list.",
+          "description": "Offer Basedpyright's quick fixes in the intentions list.",
+          "type": "boolean",
+          "default": true
+        },
+        "inlayHints": {
+          "title": "Inlay Hints",
+          "description": "Show Basedpyright's inline type and parameter-name labels.",
+          "type": "boolean",
+          "default": true
+        },
+        "semanticTokens": {
+          "title": "Semantic Tokens",
+          "description": "Color identifiers with Basedpyright's semantic classification, where the editor has semantic highlighting enabled.",
           "type": "boolean",
           "default": true
         }
@@ -129,24 +147,26 @@
     },
     "venvPath": {
       "title": "Virtual Environment Path",
-      "description": "Path to the folder that holds your virtual environments, not to one of them. Leave empty to let Pyright find the environment itself.",
+      "description": "Path to the folder that holds your virtual environments, not to one of them. Leave empty to let Basedpyright find the environment itself.",
       "type": "string",
       "default": ""
     },
     "analysis": {
       "title": "Analysis",
-      "description": "What Pyright reads and how strictly it reads it. A `pyrightconfig.json` or the `[tool.pyright]` table of `pyproject.toml` overrides these for the project that has one, and is the only place to override the severity of an individual rule.",
+      "description": "What Basedpyright reads and how strictly it reads it. A `pyrightconfig.json` or the `[tool.pyright]` or `[tool.basedpyright]` table of `pyproject.toml` overrides these for the project that has one, and is the only place to override the severity of an individual rule.",
       "type": "object",
       "properties": {
         "typeCheckingMode": {
           "title": "Type Checking Mode",
-          "description": "Strictness of Pyright's type checking.",
+          "description": "Strictness of Basedpyright's type checking. `recommended` and `all` are Basedpyright's own tiers beyond Pyright's.",
           "type": "string",
           "enum": [
             "off",
             "basic",
             "standard",
-            "strict"
+            "strict",
+            "recommended",
+            "all"
           ],
           "default": "basic"
         },
@@ -162,7 +182,7 @@
         },
         "extraPaths": {
           "title": "Extra Paths",
-          "description": "Additional directories to search for imports, for source layouts Pyright cannot infer — a `src` root, a vendored library, a generated stub tree. Relative paths resolve against the project root.",
+          "description": "Additional directories to search for imports, for source layouts Basedpyright cannot infer — a `src` root, a vendored library, a generated stub tree. Relative paths resolve against the project root.",
           "type": "array",
           "items": {
             "type": "string"
@@ -177,7 +197,7 @@
         },
         "typeshedPaths": {
           "title": "Typeshed Paths",
-          "description": "Where to look for typeshed's bundled stubs instead of the copy that ships with Pyright. Only the first entry is used.",
+          "description": "Where to look for typeshed's bundled stubs instead of the copy that ships with Basedpyright. Only the first entry is used.",
           "type": "array",
           "items": {
             "type": "string"
@@ -231,7 +251,7 @@
         },
         "logLevel": {
           "title": "Log Level",
-          "description": "How much Pyright writes to its log, which `ide-client:show-log` opens.",
+          "description": "How much Basedpyright writes to its log, which `ide-client:show-log` opens.",
           "type": "string",
           "enum": [
             "Error",

@@ -1,19 +1,20 @@
 # ide-pyright
 
-Pyright language-server adapter for Python.
+Basedpyright language-server adapter for Python.
 
-Registers the Pyright language server with the bundled `ide-client` package, providing completions, type-checking diagnostics, navigation, and refactoring for Python projects.
+Registers the Basedpyright language server — the maintained Pyright fork with the language-server features Pylance withholds — with the bundled `ide-client` package, providing completions, type-checking diagnostics, navigation, inlay hints, semantic highlighting, and refactoring for Python projects. The package keeps its historical `ide-pyright` name; Basedpyright is a drop-in Pyright and reads the same `pyrightconfig.json`.
 
 ## Features
 
-- **Bundled server**: ships Pyright, no setup required.
-- **Managed upgrade**: installs a newer Pyright from npm when you want one, and removing it returns to the bundled copy.
+- **Bundled server**: ships Basedpyright, no setup required.
+- **Managed upgrade**: installs a newer Basedpyright from npm when you want one, and removing it returns to the bundled copy.
 - **Python and IPython**: serves the Python grammar and its IPython dialect.
-- **Custom binary**: the Server Path setting points at any other Pyright `langserver` executable.
+- **Notebook support**: speaks LSP notebook sync, so with [ide-jupyter](https://github.com/lumine-code/ide-jupyter) it analyzes Jupyter notebook cells with cross-cell context.
+- **Custom binary**: the Server Path setting points at any other Basedpyright `langserver` executable.
 - **Interpreter selection**: the Python Path and Virtual Environment Path settings pick the interpreter used for analysis.
-- **Import resolution**: extra search paths, a stub directory, and a typeshed override reach source layouts Pyright cannot infer.
-- **Analysis settings**: type-checking strictness, diagnostic scope, and the include, exclude, and ignore lists map straight to Pyright configuration.
-- **Feature switches**: any of the ten capabilities Pyright serves can be turned off, which hands it to another Python server on the same file.
+- **Import resolution**: extra search paths, a stub directory, and a typeshed override reach source layouts Basedpyright cannot infer.
+- **Analysis settings**: type-checking strictness, diagnostic scope, and the include, exclude, and ignore lists map straight to Basedpyright configuration.
+- **Feature switches**: any of the thirteen capabilities Basedpyright serves can be turned off, which hands it to another Python server on the same file.
 - **Project sessions**: one server per project root, started lazily with the first Python editor.
 
 ## Installation
@@ -22,7 +23,7 @@ To install `ide-pyright` search for _ide-pyright_ in the Install pane of the Lum
 
 ## Services
 
-- **ide-client** (`^1.0.0`): consumed to register the Pyright adapter with the editor's language-server client.
+- **ide-client** (`^1.0.0`): consumed to register the Basedpyright adapter with the editor's language-server client.
 
 ## Contributing
 
