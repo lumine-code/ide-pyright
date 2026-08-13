@@ -9,7 +9,7 @@ Registers the Basedpyright language server — the maintained Pyright fork with 
 - **Bundled server**: ships Basedpyright, no setup required.
 - **Managed upgrade**: installs a newer Basedpyright from npm when you want one, and removing it returns to the bundled copy.
 - **Python and IPython**: serves the Python grammar and its IPython dialect.
-- **Notebook support**: speaks LSP notebook sync, so with [ide-jupyter](https://github.com/lumine-code/ide-jupyter) it analyzes Jupyter notebook cells with cross-cell context.
+- **Notebook support**: speaks LSP notebook sync, so with jupyter-view it analyzes Jupyter notebook cells with cross-cell context.
 - **Custom binary**: the Server Path setting points at any other Basedpyright `langserver` executable.
 - **Interpreter selection**: the Python Path and Virtual Environment Path settings pick the interpreter used for analysis.
 - **Import resolution**: extra search paths, a stub directory, and a typeshed override reach source layouts Basedpyright cannot infer.
