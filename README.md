@@ -19,11 +19,11 @@ Registers the Basedpyright language server — the maintained Pyright fork with 
 
 ## Installation
 
-To install `ide-pyright` search for _ide-pyright_ in the Install pane of the Lumine settings or run `lumine --install lumine-code/ide-pyright`.
+To install `ide-pyright` search for it in the Install pane of the Lumine settings, or run the command `lumine --install lumine-code/ide-pyright`.
 
 ## Services
 
-- **ide-client** (`^1.0.0`): consumed to register the Basedpyright adapter with the editor's language-server client.
+- `ide-client`: consumed to register the Basedpyright adapter with the editor's language-server client.
 
 ## Contributing
 
