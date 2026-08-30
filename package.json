@@ -111,14 +111,7 @@
         },
         "symbols": {
           "title": "Symbols",
-          "description": "Serve document and project symbols to go-to-symbol.",
-          "scopeResolution": "grammar",
-          "type": "boolean",
-          "default": true
-        },
-        "outline": {
-          "title": "Outline",
-          "description": "Fill the outline panel from Basedpyright's document symbols.",
+          "description": "Serve document and project symbols to navigation features.",
           "scopeResolution": "grammar",
           "type": "boolean",
           "default": true

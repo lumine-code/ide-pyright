@@ -141,7 +141,6 @@ describe("ide-pyright features", () => {
       "references",
       "callHierarchy",
       "symbols",
-      "outline",
       "rename",
       "codeActions",
       "inlayHints",
