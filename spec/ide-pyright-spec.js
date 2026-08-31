@@ -83,6 +83,7 @@ describe("ide-pyright adapter", () => {
     expect(adapter.id).toBe("ide-pyright");
     expect(adapter.grammarScopes).toEqual(["source.python", "source.python.ipy"]);
     expect(adapter.settingsKeyPaths).toEqual(["ide-pyright"]);
+    expect(adapter.restartKeyPaths).toEqual(["ide-pyright.serverPath"]);
   });
 
   it("maps editor settings into the server's configuration sections", () => {
