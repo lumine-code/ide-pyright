@@ -129,10 +129,10 @@ describe("ide-pyright features", () => {
 
   it("offers a switch only for what Basedpyright advertises", () => {
     // Verified against the server's own initialize response, not its docs:
-    // Basedpyright 1.39.9 adds call hierarchy, inlay hints and semantic tokens
-    // over open-source Pyright, and still has no formatter, code lens, or type
-    // hierarchy — a switch for one of those would be a control that does
-    // nothing.
+    // Basedpyright 1.39.10 adds call hierarchy, inlay hints and semantic tokens
+    // over open-source Pyright. Its only formatting capability is the
+    // brace-triggered on-type edit; it has no whole-document formatter, code
+    // lens, or type hierarchy.
     expect(Object.keys(configSchema.features.properties)).toEqual([
       "diagnostics",
       "autocomplete",
@@ -142,6 +142,7 @@ describe("ide-pyright features", () => {
       "references",
       "callHierarchy",
       "symbols",
+      "format",
       "rename",
       "codeActions",
       "inlayHints",
