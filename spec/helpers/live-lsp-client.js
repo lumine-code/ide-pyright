@@ -23,6 +23,9 @@ class LiveLspClient {
     this.adapter = adapter;
     this.rootPath = rootPath;
     this.notifications = [];
+    this.dynamicRegistrations = new Map();
+    this.partialResults = new Map();
+    this.partialResultCounter = 0;
     this.stderr = "";
   }
 
@@ -45,6 +48,14 @@ class LiveLspClient {
         log() {},
       },
     );
+    // vscode-jsonrpc reserves $/progress for its token API, so a catch-all
+    // notification handler never sees it. A named handler mirrors ide-client
+    // and makes work-done progress observable in the live specs.
+    this.connection.onNotification("$/progress", (params) => {
+      const partial = this.partialResults.get(params.token);
+      if (partial) partial(params.value);
+      else this.notifications.push({ method: "$/progress", params });
+    });
     this.connection.onNotification((method, params) => this.notifications.push({ method, params }));
     this.connection.onRequest("workspace/configuration", ({ items }) =>
       Promise.all(
@@ -55,12 +66,25 @@ class LiveLspClient {
     );
     this.connection.onRequest("workspace/applyEdit", () => ({ applied: true }));
     this.connection.onRequest("workspace/workspaceFolders", () => this.workspaceFolders);
-    this.connection.onRequest("client/registerCapability", () => null);
+    this.connection.onRequest("client/registerCapability", ({ registrations = [] }) => {
+      for (const registration of registrations)
+        this.dynamicRegistrations.set(registration.id, registration);
+      return null;
+    });
+    this.connection.onRequest("client/unregisterCapability", (params) => {
+      for (const registration of params.unregisterations || params.unregistrations || [])
+        this.dynamicRegistrations.delete(registration.id);
+      return null;
+    });
     this.connection.onRequest("window/workDoneProgress/create", () => null);
     this.connection.listen();
 
     const rootUri = pathToFileURL(this.rootPath).href;
     this.workspaceFolders = [{ uri: rootUri, name: path.basename(this.rootPath) }];
+    const initializationOptions = await this.adapter.getInitializationOptions?.({
+      rootPath: this.rootPath,
+      rootUri,
+    });
     const result = await this.request("initialize", {
       processId: process.pid,
       clientInfo: { name: "Lumine adapter integration specs", version: "1.0.0" },
@@ -71,6 +95,7 @@ class LiveLspClient {
           applyEdit: true,
           configuration: true,
           workspaceFolders: true,
+          diagnostics: { refreshSupport: true },
           workspaceEdit: {
             documentChanges: true,
             resourceOperations: ["create", "rename", "delete"],
@@ -79,6 +104,7 @@ class LiveLspClient {
         textDocument: {
           synchronization: { dynamicRegistration: false, didSave: true },
           publishDiagnostics: { relatedInformation: true, versionSupport: true },
+          diagnostic: { dynamicRegistration: true, relatedDocumentSupport: true },
           completion: {
             dynamicRegistration: true,
             completionItem: {
@@ -107,6 +133,7 @@ class LiveLspClient {
         window: { workDoneProgress: true },
         general: { positionEncodings: ["utf-16"] },
       },
+      initializationOptions,
     });
     this.connection.sendNotification("initialized", {});
     this.connection.sendNotification("workspace/didChangeConfiguration", {
@@ -131,6 +158,34 @@ class LiveLspClient {
 
   messages(method) {
     return this.notifications.filter((message) => message.method === method);
+  }
+
+  registrations(method) {
+    return [...this.dynamicRegistrations.values()].filter(
+      (registration) => registration.method === method,
+    );
+  }
+
+  startWorkspaceDiagnostics() {
+    const token = `ide-pyright-live-diagnostic-${++this.partialResultCounter}`;
+    const items = [];
+    const provider = this.registrations("textDocument/diagnostic")[0]?.registerOptions;
+    const params = { previousResultIds: [], partialResultToken: token };
+    if (provider?.identifier) params.identifier = provider.identifier;
+    this.partialResults.set(token, (partial) => items.push(...(partial?.items || [])));
+    // Basedpyright keeps the workspace request open after returning its first
+    // partial batch. That is useful to this spec: production ide-client also
+    // consumes the partial results, while work-done progress is a separate
+    // token whose `end` is the behavior under test. Own the eventual rejection
+    // so teardown does not leave an unhandled promise.
+    const pending = this.connection
+      .sendRequest("workspace/diagnostic", params)
+      .then(
+        (report) => items.push(...(report?.items || [])),
+        () => {},
+      )
+      .finally(() => this.partialResults.delete(token));
+    return { items, pending };
   }
 
   async waitFor(check, label, timeout = 15000) {

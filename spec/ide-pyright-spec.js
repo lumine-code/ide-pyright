@@ -76,6 +76,8 @@ describe("ide-pyright adapter", () => {
   });
   afterEach(async () => {
     disposable.dispose();
+    for (const scopeSelector of [".source.python", ".source.python.ipy"])
+      lumine.config.unset("ide-pyright.features.diagnostics", { scopeSelector });
     await lumine.packages.deactivatePackage("ide-pyright");
   });
 
@@ -83,7 +85,30 @@ describe("ide-pyright adapter", () => {
     expect(adapter.id).toBe("ide-pyright");
     expect(adapter.grammarScopes).toEqual(["source.python", "source.python.ipy"]);
     expect(adapter.settingsKeyPaths).toEqual(["ide-pyright"]);
-    expect(adapter.restartKeyPaths).toEqual(["ide-pyright.serverPath"]);
+    expect(adapter.restartKeyPaths).toEqual([
+      "ide-pyright.serverPath",
+      "ide-pyright.features.diagnostics",
+    ]);
+  });
+
+  it("uses pull diagnostics while either served grammar has diagnostics enabled", () => {
+    const combinations = [
+      { python: false, ipython: false, disablePullDiagnostics: true },
+      { python: true, ipython: false, disablePullDiagnostics: false },
+      { python: false, ipython: true, disablePullDiagnostics: false },
+      { python: true, ipython: true, disablePullDiagnostics: false },
+    ];
+
+    for (const { python, ipython, disablePullDiagnostics } of combinations) {
+      lumine.config.set("ide-pyright.features.diagnostics", python, {
+        scopeSelector: ".source.python",
+      });
+      lumine.config.set("ide-pyright.features.diagnostics", ipython, {
+        scopeSelector: ".source.python.ipy",
+      });
+
+      expect(adapter.getInitializationOptions()).toEqual({ disablePullDiagnostics });
+    }
   });
 
   it("maps editor settings into the server's configuration sections", () => {
