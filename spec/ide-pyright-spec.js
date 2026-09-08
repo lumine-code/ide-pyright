@@ -76,6 +76,7 @@ describe("ide-pyright adapter", () => {
   });
   afterEach(async () => {
     disposable.dispose();
+    lumine.config.unset("ide-pyright.analysis.warnSlowFileEnumeration");
     for (const scopeSelector of [".source.python", ".source.python.ipy"])
       lumine.config.unset("ide-pyright.features.diagnostics", { scopeSelector });
     await lumine.packages.deactivatePackage("ide-pyright");
@@ -146,6 +147,18 @@ describe("ide-pyright adapter", () => {
     expect(python.analysis.include).toBeUndefined();
     // Booleans have no empty state, so they are always sent.
     expect(python.analysis.useLibraryCodeForTypes).toBe(true);
+  });
+
+  it("can silence the slow workspace-enumeration warning", () => {
+    expect(adapter.getWorkspaceConfiguration("basedpyright.analysis").fileEnumerationTimeout).toBe(
+      undefined,
+    );
+
+    lumine.config.set("ide-pyright.analysis.warnSlowFileEnumeration", false);
+
+    expect(adapter.getWorkspaceConfiguration("basedpyright.analysis").fileEnumerationTimeout).toBe(
+      Number.MAX_SAFE_INTEGER,
+    );
   });
 });
 

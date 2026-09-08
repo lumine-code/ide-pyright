@@ -195,6 +195,12 @@
           ],
           "default": "openFilesOnly"
         },
+        "warnSlowFileEnumeration": {
+          "title": "Warn When File Enumeration Is Slow",
+          "description": "Show a notification when Basedpyright takes more than 10 seconds to scan the workspace for source files.",
+          "type": "boolean",
+          "default": true
+        },
         "extraPaths": {
           "title": "Extra Paths",
           "description": "Additional directories to search for imports, for source layouts Basedpyright cannot infer — a `src` root, a vendored library, a generated stub tree. Relative paths resolve against the project root.",

@@ -11,7 +11,7 @@ Registers the Basedpyright language server — the maintained Pyright fork with 
 - **Notebook support**: speaks LSP notebook sync, so with jupyter-view it analyzes Jupyter notebook cells with cross-cell context.
 - **Interpreter selection**: the Python Path and Virtual Environment Path settings pick the interpreter used for analysis.
 - **Import resolution**: extra search paths, a stub directory, and a typeshed override reach source layouts Basedpyright cannot infer.
-- **Analysis settings**: type-checking strictness, diagnostic scope, and the include, exclude, and ignore lists map straight to Basedpyright configuration.
+- **Analysis settings**: type-checking strictness, diagnostic scope, and the include, exclude, and ignore lists map straight to Basedpyright configuration; the slow workspace-scan warning can be silenced separately.
 - **Format as you type**: applies the server's brace-triggered indentation edits; Basedpyright does not provide whole-document formatting.
 - **Feature switches**: any of the thirteen capabilities Basedpyright serves can be turned off, which hands it to another Python server on the same file.
 - **Project sessions**: one server per project root, started lazily with the first Python editor.
