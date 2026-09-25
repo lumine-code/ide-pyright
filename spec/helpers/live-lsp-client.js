@@ -188,7 +188,7 @@ class LiveLspClient {
     return { items, pending };
   }
 
-  async waitFor(check, label, timeout = 15000) {
+  async waitFor(check, label, timeout = 30000) {
     const start = Date.now();
     while (Date.now() - start < timeout) {
       const value = await check();

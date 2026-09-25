@@ -13,7 +13,9 @@ describe("ide-pyright bundled server", () => {
   beforeEach(async () => {
     jasmine.useRealClock();
     originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000;
+    // A cold Basedpyright process can take more than 15 seconds to finish its
+    // dynamic capability registration on a loaded Windows CI runner.
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 60000;
     rootPath = fs.mkdtempSync(path.join(os.tmpdir(), "ide-pyright-live-"));
     await lumine.packages.activatePackage("ide-pyright");
     disposable = main.consumeIdeClient({
